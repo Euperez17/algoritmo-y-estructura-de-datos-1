@@ -50,8 +50,8 @@ def registrarUsuario(datos):
 #Comienzo del programa
 print("Bienvenido al sistema de reservas de turnos.")
 cuenta = input("Ya tienes una cuenta? (S/N)")
-if (cuenta == "N"):
-    registrarUsuario()
+if (cuenta == "N" or cuenta == "n"):
+    registrarUsuario(DATOS)
 
 #login
 usuario = input("Ingrese su nombre de usuario: ")
@@ -75,7 +75,7 @@ seleccion = reservar(LISTA_HORARIOS,DATOS)
 while seleccion != "CANCELAR":
 
     DATOS[indiceUsuario][2].append(seleccion)
-    print("DEBUG:", DATOS[indiceUsuario][2])
+
     if seleccion != "CANCELAR":
         print("Reserva registrada correctamente!")
     seleccion=reservar(LISTA_HORARIOS,DATOS)
