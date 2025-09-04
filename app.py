@@ -1,3 +1,5 @@
+import getpass
+
 #hasta que aprendamos a usar archivos, hardcodeamos esta matriz para el login
 DATOS = [] #estructura: nombre, contraseña, reservas hechas
 
@@ -41,45 +43,45 @@ def registrarUsuario(datos):
             print("El nombre de usuario ya existe. Por favor, elige otro.")
             usuario = input("Ingrese un nombre de usuario: ")
 
-        contraseña = input("Ingrese una contraseña segura: ") #estaria bueno que la contraseña no se muestre - tambien se puede agregar seguridad en un futuro
+        contraseña = getpass.getpass("Ingrese una contraseña segura: ") #estaria bueno que la contraseña no se muestre - tambien se puede agregar seguridad en un futuro
         datos.append([usuario, contraseña, []])
         print("Cuenta creada exitosamente!")
     
 
+def main():
+    #Comienzo del programa
+    print("Bienvenido al sistema de reservas de turnos.")
+    cuenta = input("Ya tienes una cuenta? (S/N)")
+    if (cuenta == "N" or cuenta == "n"):
+        registrarUsuario(DATOS)
 
-#Comienzo del programa
-print("Bienvenido al sistema de reservas de turnos.")
-cuenta = input("Ya tienes una cuenta? (S/N)")
-if (cuenta == "N" or cuenta == "n"):
-    registrarUsuario(DATOS)
-
-#login
-usuario = input("Ingrese su nombre de usuario: ")
-contraseña = input("Ingrese su contraseña: ")
-while usuario not in [u[0] for u in DATOS] or contraseña not in [u[1] for u in DATOS]:
-    print("Usuario o contraseña incorrectos. Intente nuevamente.")
+    #login
     usuario = input("Ingrese su nombre de usuario: ")
-    contraseña = input("Ingrese su contraseña: ")
+    contraseña = getpass.getpass("Ingrese su contraseña: ")
+    while usuario not in [u[0] for u in DATOS] or contraseña not in [u[1] for u in DATOS]:
+        print("Usuario o contraseña incorrectos. Intente nuevamente.")
+        usuario = input("Ingrese su nombre de usuario: ")
+        contraseña = getpass.getpass("Ingrese su contraseña: ")
 
-#buscamos al usuario que se logueo y guardamos su indice
-indiceUsuario = -1
-i = 0
-while i < len(DATOS) and indiceUsuario == -1:
-    if DATOS[i][0] == usuario:
-        indiceUsuario = i
-    i += 1
+    #buscamos al usuario que se logueo y guardamos su indice
+    indiceUsuario = -1
+    i = 0
+    while i < len(DATOS) and indiceUsuario == -1:
+        if DATOS[i][0] == usuario:
+            indiceUsuario = i
+        i += 1
 
-#primera reserva, luego loop principal de flujo de sistema
-seleccion = reservar(LISTA_HORARIOS,DATOS)
+    #primera reserva, luego loop principal de flujo de sistema
+    seleccion = reservar(LISTA_HORARIOS,DATOS)
 
-while seleccion != "CANCELAR":
+    while seleccion != "CANCELAR":
 
-    DATOS[indiceUsuario][2].append(seleccion)
+        DATOS[indiceUsuario][2].append(seleccion)
 
-    if seleccion != "CANCELAR":
-        print("Reserva registrada correctamente!")
-    seleccion=reservar(LISTA_HORARIOS,DATOS)
+        if seleccion != "CANCELAR":
+            print("Reserva registrada correctamente!")
+        seleccion=reservar(LISTA_HORARIOS,DATOS)
 
+    print("adios!")
 
-
-print("adios!")
+main()
