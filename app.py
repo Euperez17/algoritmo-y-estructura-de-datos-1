@@ -1,52 +1,7 @@
+from constantes import DATOS, LISTA_HORARIOS
+from registro import registrarUsuario
+from reservas import reservar
 import getpass
-
-#hasta que aprendamos a usar archivos, hardcodeamos esta matriz para el login
-DATOS = [] #estructura: nombre, contraseña, reservas hechas
-
-DATOS.append(["dante", "1234", ["08:00"]])
-DATOS.append(["augus", "5678", []])
-# Constante de lista de horarios posibles
-LISTA_HORARIOS = ["08:00", "09:30", "11:00", "12:30", "14:00", "15:30", "17:00", "18:30", "20:00"]
-
-def buscarHorariosReservados(datos):
-    horariosReservados = []
-    for usuario in datos:
-        horariosReservados.extend(usuario[2])
-    return horariosReservados
-
-def mostrarReservasDisponibles(lista, datos):
-    print("Horarios disponibles: ")
-    reservados = buscarHorariosReservados(datos)
-
-    for i in lista:
-        if i not in reservados:
-            print(i, end="  |  ")
-    print("")
-
-
-def reservar(HORARIOS,datos):
-    mostrarReservasDisponibles(HORARIOS,datos)
-    seleccion = input("Indique el horario que desea reservar o 'CANCELAR' para cancelar: ")
-    reservados = buscarHorariosReservados(datos)
-    while (seleccion not in HORARIOS or seleccion in reservados) and seleccion != "CANCELAR":
-        print("Ese horario no esta disponible en este momento. Por favor, intenta de nuevo")
-        mostrarReservasDisponibles(HORARIOS,datos)
-        seleccion = input("Indique el horario que desea reservar o 'CANCELAR' para cancelar: ")
-    return seleccion
-
-def registrarUsuario(datos):
-        print("")
-        print("Registro de usuario")
-
-        usuario = input("Ingrese un nombre de usuario: ")
-        while usuario in [u[0] for u in datos]:
-            print("El nombre de usuario ya existe. Por favor, elige otro.")
-            usuario = input("Ingrese un nombre de usuario: ")
-
-        contraseña = getpass.getpass("Ingrese una contraseña segura: ") #estaria bueno que la contraseña no se muestre - tambien se puede agregar seguridad en un futuro
-        datos.append([usuario, contraseña, []])
-        print("Cuenta creada exitosamente!")
-    
 
 def main():
     #Comienzo del programa
