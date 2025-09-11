@@ -1,3 +1,5 @@
+from datetime import datetime
+
 def buscarHorariosReservados(datos):
     horariosReservados = []
     for usuario in datos:
@@ -5,12 +7,17 @@ def buscarHorariosReservados(datos):
     return horariosReservados
 
 def mostrarReservasDisponibles(lista, datos):
+    ahora = datetime.now() #fecha y hora actual
+    hora_actual = ahora.strftime("%H:%M")
+    print("\nHora actual: ",hora_actual)
     print("Horarios disponibles: ")
+
     reservados = buscarHorariosReservados(datos)
 
-    for i in lista:
-        if i not in reservados:
-            print(i, end="  |  ")
+    for horario in lista:
+        #Si el horario no esta reservado y si el horario es > a la hora actual, lo muestra
+        if horario not in reservados and horario > hora_actual:
+            print(horario, end="  |  ")
     print("")
 
 
