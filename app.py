@@ -13,7 +13,7 @@ def main():
     #login
     usuario = input("Ingrese su nombre de usuario: ")
     contraseña = getpass.getpass("Ingrese su contraseña: ")
-    while usuario not in [u[0] for u in DATOS] or contraseña not in [u[1] for u in DATOS]:
+    while [usuario, contraseña] not in [[user[0], user[1]] for user in DATOS]:
         print("Usuario o contraseña incorrectos. Intente nuevamente.")
         usuario = input("Ingrese su nombre de usuario: ")
         contraseña = getpass.getpass("Ingrese su contraseña: ")
