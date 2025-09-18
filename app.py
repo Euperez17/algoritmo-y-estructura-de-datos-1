@@ -1,6 +1,7 @@
 from constantes import DATOS, LISTA_HORARIOS
 from registro import registrarUsuario
 from reservas import reservar
+from reservas import mostrarReservasOcupadas
 import getpass
 
 def main():
@@ -13,30 +14,31 @@ def main():
     #login
     usuario = input("Ingrese su nombre de usuario: ")
     contraseña = getpass.getpass("Ingrese su contraseña: ")
-    while [usuario, contraseña] not in [[user[0], user[1]] for user in DATOS]:
+    while usuario not in DATOS or DATOS[usuario]["contraseña"] != contraseña:
         print("Usuario o contraseña incorrectos. Intente nuevamente.")
         usuario = input("Ingrese su nombre de usuario: ")
         contraseña = getpass.getpass("Ingrese su contraseña: ")
 
-    #buscamos al usuario que se logueo y guardamos su indice
-    indiceUsuario = -1
-    i = 0
-    while i < len(DATOS) and indiceUsuario == -1:
-        if DATOS[i][0] == usuario:
-            indiceUsuario = i
-        i += 1
+    opcion = 0
+    while opcion != 3:
+        print("\n--- MENÚ PRINCIPAL ---")
+        print("1. Reservar un horario")
+        print("2. Ver horarios reservados")
+        print("3. Cancelar y salir")
 
-    #primera reserva, luego loop principal de flujo de sistema
-    seleccion = reservar(LISTA_HORARIOS,DATOS)
+        opcion = int(input("Elija una opción (1 - 2 - 3): "))
 
-    while seleccion != "CANCELAR":
-
-        DATOS[indiceUsuario][2].append(seleccion)
-
-        if seleccion != "CANCELAR":
-            print("Reserva registrada correctamente!")
-        seleccion=reservar(LISTA_HORARIOS,DATOS)
-
-    print("adios!")
+        if opcion == 1:
+            seleccion = reservar(LISTA_HORARIOS, DATOS)
+            if seleccion != "CANCELAR":
+                DATOS[usuario]["reservas"].append(seleccion)
+                print("Reserva registrada correctamente!")
+        elif opcion == 2:
+            deporte = input("Ingrese el deporte para ver sus reservas: ")
+            mostrarReservasOcupadas(DATOS, deporte)
+        elif opcion == 3:
+            print("Adiós!")
+        else:
+            print("Opción no válida.")
 
 main()
