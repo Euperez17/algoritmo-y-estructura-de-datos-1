@@ -1,8 +1,7 @@
 from datetime import datetime
-
 def buscarHorariosReservados(datos):
     # lista de listas: Devuelve [[deporte, horario], ...]
-    return [reserva for usuario in datos for reserva in usuario[2]]
+    return [reserva for usuario in datos.values() for reserva in usuario["reservas"]]
 
 def mostrarReservasDisponibles(lista, datos, deporte):
     ahora = datetime.now() # fecha y hora actual
@@ -14,9 +13,20 @@ def mostrarReservasDisponibles(lista, datos, deporte):
 
     # filtramos solo los horarios disponibles
     disponibles = list(filter(lambda h: [deporte, h] not in reservados and h > hora_actual, lista[deporte]))
-
     for horario in disponibles:
         print(horario, end="  |  ")
+    print("")
+
+def mostrarReservasOcupadas(DATOS, deporte):
+    print(f"\nHorarios ya reservados para {deporte}:")
+    reservados = buscarHorariosReservados(DATOS)
+    ocupados = [h for d, h in reservados if d == deporte] #h = horario, d = deporte -> chequea que horarios están ocupados por cada deporte
+
+    if not ocupados:
+        print("No hay horarios reservados todavía.")
+    else:
+        for h in ocupados:
+            print(h, end=" | ") 
     print("")
 
 def reservar(HORARIOS, datos):
