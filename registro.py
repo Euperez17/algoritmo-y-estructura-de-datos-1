@@ -7,7 +7,7 @@ def registrarUsuario(datos):
         usuario = input("Ingrese un nombre de usuario: ")
         while usuario in datos:
             print("El nombre de usuario ya existe. Por favor, elige otro.")
-            nombre = input("Ingrese un nombre de usuario: ")
+            usuario = input("Ingrese un nombre de usuario: ")
 
         contraseña = getpass.getpass("Ingrese una contraseña segura: ")
 
