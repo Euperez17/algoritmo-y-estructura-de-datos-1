@@ -1,4 +1,4 @@
-from constantes import DATOS, LISTA_HORARIOS
+from constantes import USUARIOS, LISTA_HORARIOS
 from registro import registrarUsuario
 from reservas import reservar
 from reservas import mostrarReservasOcupadas
@@ -7,14 +7,14 @@ import getpass
 def main():
     #Comienzo del programa
     print("Bienvenido al sistema de reservas de turnos.")
-    cuenta = input("Ya tienes una cuenta? (S/N)")
-    if (cuenta == "N" or cuenta == "n"):
-        registrarUsuario(DATOS)
+    cuenta = input("Ya tienes una cuenta? (S/N): ")
+    if (cuenta.lower() == "n"):
+        registrarUsuario(USUARIOS)
 
     #login
     usuario = input("Ingrese su nombre de usuario: ")
     contraseña = getpass.getpass("Ingrese su contraseña: ")
-    while usuario not in DATOS or DATOS[usuario]["contraseña"] != contraseña:
+    while usuario not in USUARIOS or USUARIOS[usuario]["contraseña"] != contraseña:
         print("Usuario o contraseña incorrectos. Intente nuevamente.")
         usuario = input("Ingrese su nombre de usuario: ")
         contraseña = getpass.getpass("Ingrese su contraseña: ")
@@ -29,13 +29,13 @@ def main():
         opcion = int(input("Elija una opción (1 - 2 - 3): "))
 
         if opcion == 1:
-            seleccion = reservar(LISTA_HORARIOS, DATOS)
+            seleccion = reservar(LISTA_HORARIOS, USUARIOS)
             if seleccion != "CANCELAR":
-                DATOS[usuario]["reservas"].append(seleccion)
+                USUARIOS[usuario]["reservas"].append(seleccion)
                 print("Reserva registrada correctamente!")
         elif opcion == 2:
             deporte = input("Ingrese el deporte para ver sus reservas: ")
-            mostrarReservasOcupadas(DATOS, deporte)
+            mostrarReservasOcupadas(USUARIOS, deporte)
         elif opcion == 3:
             print("Adiós!")
         else:

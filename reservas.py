@@ -32,15 +32,17 @@ def mostrarReservasOcupadas(DATOS, deporte):
 def reservar(HORARIOS, datos):
     # Elegir deporte
     print("\nDeportes disponibles:")
-    for dep in HORARIOS.keys():
+    deportes = list(HORARIOS.keys())
+    for dep in deportes:
         print(f"- {dep}")
     deporte = input("Ingrese el deporte para ver los horarios o 'CANCELAR': ")
 
-    while deporte not in HORARIOS and deporte != "CANCELAR":
+
+    while deporte not in deportes and deporte.upper() != "CANCELAR":
         print("Ese deporte no existe. Intente de nuevo.")
         deporte = input("Ingrese el deporte o 'CANCELAR': ")
 
-    if deporte == "CANCELAR":
+    if deporte.upper() == "CANCELAR":
         return "CANCELAR"
 
     # Elegir horario
@@ -48,12 +50,12 @@ def reservar(HORARIOS, datos):
     seleccion = input("Indique el horario que desea reservar o 'CANCELAR': ")
 
     reservados = buscarHorariosReservados(datos)
-    while (seleccion not in HORARIOS[deporte] or [deporte, seleccion] in reservados) and seleccion != "CANCELAR":
+    while (seleccion not in HORARIOS[deporte] or [deporte, seleccion] in reservados) and seleccion.upper() != "CANCELAR":
         print("Ese horario no está disponible. Intente de nuevo.")
         mostrarReservasDisponibles(HORARIOS, datos, deporte)
         seleccion = input("Indique el horario que desea reservar o 'CANCELAR': ")
 
-    if seleccion == "CANCELAR":
+    if seleccion.upper() == "CANCELAR":
         return "CANCELAR"
 
     return [deporte, seleccion]
