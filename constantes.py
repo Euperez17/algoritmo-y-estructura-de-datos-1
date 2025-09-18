@@ -1,7 +1,8 @@
 # Hasta que aprendamos a usar archivos, hardcodeamos esta matriz para el login
-DATOS = [] #estructura: nombre, contraseña, reservas hechas
-DATOS.append(["dante", "1234", ["08:00"]])
-DATOS.append(["augus", "5678", []])
+DATOS = {
+    "dante": {"contraseña": "1234", "reservas": [["Futbol", "20:00"]]},
+    "augus": {"contraseña": "5678", "reservas": []}
+} #estructura: nombre, contraseña, reservas hechas
 
 # Constante de diccionario con los horarios posibles por deporte
 LISTA_HORARIOS = {
