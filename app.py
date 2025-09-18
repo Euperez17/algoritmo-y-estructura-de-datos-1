@@ -34,7 +34,7 @@ def main():
                 USUARIOS[usuario]["reservas"].append(seleccion)
                 print("Reserva registrada correctamente!")
         elif opcion == 2:
-            deporte = input("Ingrese el deporte para ver sus reservas: ")
+            deporte = input("Ingrese el deporte para ver sus reservas (Futbol, Padel, Tenis): ")
             mostrarReservasOcupadas(USUARIOS, deporte)
         elif opcion == 3:
             print("Adiós!")
