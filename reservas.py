@@ -18,7 +18,7 @@ def mostrarReservasDisponibles(lista, datos, deporte):
     print("")
 
 def mostrarReservasOcupadas(DATOS, deporte):
-    print(f"\nHorarios ya reservados para {deporte}:")
+    print(f"\nHorarios ocupados para {deporte}:")
     reservados = buscarHorariosReservados(DATOS)
     ocupados = [h for d, h in reservados if d == deporte] #h = horario, d = deporte -> chequea que horarios están ocupados por cada deporte
 
