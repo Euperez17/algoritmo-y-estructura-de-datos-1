@@ -2,6 +2,7 @@ from constantes import USUARIOS, LISTA_HORARIOS
 from registro import registrarUsuario
 from reservas import reservar
 from reservas import mostrarReservasOcupadas
+from reservas import mostrarMisReservas
 import getpass
 
 def main():
@@ -18,25 +19,29 @@ def main():
         print("Usuario o contraseña incorrectos. Intente nuevamente.")
         usuario = input("Ingrese su nombre de usuario: ")
         contraseña = getpass.getpass("Ingrese su contraseña: ")
+    usuarioLogueado = USUARIOS[usuario]
 
     opcion = 0
     while opcion != 3:
         print("\n--- MENÚ PRINCIPAL ---")
         print("1. Reservar un horario")
         print("2. Ver horarios ocupados")
-        print("3. Cancelar y salir")
+        print("3. Publicar una reserva")
+        print("4. Cancelar y salir")
 
-        opcion = int(input("Elija una opción (1 - 2 - 3): "))
+        opcion = int(input("Elija una opción (1 - 2 - 3 - 4): "))
 
         if opcion == 1:
-            seleccion = reservar(LISTA_HORARIOS, USUARIOS)
-            if seleccion != "CANCELAR":
-                USUARIOS[usuario]["reservas"].append(seleccion)
+            reserva = reservar(LISTA_HORARIOS, USUARIOS)
+            if reserva != "CANCELAR":
+                USUARIOS[usuario]["reservas"].append(reserva)
                 print("Reserva registrada correctamente!")
         elif opcion == 2:
             deporte = input("Ingrese el deporte para ver las reservas (Futbol, Padel, Tenis): ")
             mostrarReservasOcupadas(USUARIOS, deporte)
         elif opcion == 3:
+            mostrarMisReservas(usuarioLogueado)
+        elif opcion == 4:
             print("Adiós!")
         else:
             print("Opción no válida.")

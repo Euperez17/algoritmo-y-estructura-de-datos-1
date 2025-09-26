@@ -1,7 +1,7 @@
 from datetime import datetime
-def buscarHorariosReservados(datos):
-    # lista de listas: Devuelve [[deporte, horario], ...]
-    return [reserva for usuario in datos.values() for reserva in usuario["reservas"]]
+def buscarHorariosReservados(usuarios):
+    
+    return [reserva for usuario in usuarios.values() for reserva in usuario["reservas"]]
 
 def mostrarReservasDisponibles(lista, datos, deporte):
     ahora = datetime.now() # fecha y hora actual
@@ -17,10 +17,14 @@ def mostrarReservasDisponibles(lista, datos, deporte):
         print(horario, end="  |  ")
     print("")
 
-def mostrarReservasOcupadas(DATOS, deporte):
-    print(f"\nHorarios ocupados para {deporte}:")
+def mostrarReservasOcupadas(DATOS, deporteBuscar):
+    print(f"\nHorarios ocupados para {deporteBuscar}:")
     reservados = buscarHorariosReservados(DATOS)
-    ocupados = [h for d, h in reservados if d == deporte] #h = horario, d = deporte -> chequea que horarios están ocupados por cada deporte
+    #ocupados = [horario for deporte, horario in reservados if deporte == deporteBuscar] #h = horario, d = deporte -> chequea que horarios están ocupados por cada deporte
+    ocupados=[] #aca podriamos añadir que muestre separado las reservas publicas, o ponerlo en otro lado para poder sumarse a la reserva
+    for i in reservados:
+        if i["Deporte"].lower()==deporteBuscar.lower():
+            ocupados.append(i["Horario"])
 
     if not ocupados:
         print("No hay horarios reservados todavía.")
@@ -58,4 +62,15 @@ def reservar(HORARIOS, datos):
     if seleccion.upper() == "CANCELAR":
         return "CANCELAR"
 
-    return [deporte, seleccion]
+    return {"Deporte":deporte,"Horario":seleccion,"Integrantes":"privado"} #al menos por ahora, es privada por defecto
+
+def mostrarMisReservas(usuarioLogueado): #devuelve las reservas que tiene el usuario
+    reservas=usuarioLogueado["reservas"]
+    for reserva in usuarioLogueado["reservas"]:
+        integrantes = reserva["Integrantes"]
+
+        print(f"{reserva['Deporte']} - Horario: {reserva['Horario']} - ",end="")
+        if integrantes!="privado":
+            print(f"Integrantes: {[i for i in integrantes]}")
+        else:
+            print("Privada")
