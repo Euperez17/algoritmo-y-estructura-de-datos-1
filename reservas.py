@@ -74,3 +74,38 @@ def mostrarMisReservas(usuarioLogueado): #devuelve las reservas que tiene el usu
             print(f"Integrantes: {[i for i in integrantes]}")
         else:
             print("Privada")
+
+def publicarReserva(usuarioLogueado,nombreUsuario): #permite al usuario publicar una reserva privada que haya hecho 
+    #hacer esta funcion me hace soñar con un menu dropdown 
+
+    deportesConReservaPrivada = [reserva["Deporte"] for reserva in usuarioLogueado["reservas"] if reserva["Integrantes"]=="privado"]
+    if len(deportesConReservaPrivada)<1:
+        print("Ups! No tienes reservas privadas!") # es una MUY mala forma de chequear si no tiene reservas privadas jajajaja
+        return #esto me da arcadas
+    deporte = input("Indique deporte de la reserva: ")
+
+    while deporte not in deportesConReservaPrivada:
+        print("No tienes reservas privadas para ese deporte")
+        deporte = input("Indique deporte de la reserva: ")
+        
+
+    reservasDeporte = [reserva for reserva in usuarioLogueado["reservas"] if reserva["Deporte"].lower() == deporte.lower()]
+    horario = input("Indique horario de la reserva: ")
+    
+    reservaSeleccionada=None
+    for reserva in reservasDeporte:
+        if reserva["Horario"]==horario:
+            reservaSeleccionada=reserva
+            break
+
+    while not reservaSeleccionada:
+        print("No tienes una reserva privada para ese horario.")
+        horario = input("Indique horario de la reserva: ")
+        reservaSeleccionada=None
+        for reserva in reservasDeporte:
+            if reserva["Horario"]==horario:
+                reservaSeleccionada=reserva
+                break
+
+    reservaSeleccionada["Integrantes"]=[nombreUsuario]
+    print("Reserva publicada! Otros usuarios pueden unirse a tu reserva ahora.")
