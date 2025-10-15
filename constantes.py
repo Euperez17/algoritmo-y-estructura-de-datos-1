@@ -1,8 +1,21 @@
 # Hasta que aprendamos a usar archivos, hardcodeamos este diccionario para el login
 USUARIOS = {
-    "dante": {"contraseña": "1234", "reservas": [["Futbol", "20:00"]]},
-    "augus": {"contraseña": "5678", "reservas": []}
+    "dante": {"contraseña": "1234", 
+              "reservas": [{ #reservas es una lista de diccionarios e integrantes contiene nombres de usuario de los integrantes
+                        "Deporte": "Futbol",
+                        "Horario":"20:00",
+                        "Integrantes": ["dante"]
+                    },
+                    {
+                        "Deporte":"Padel",
+                        "Horario":"08:00",
+                        "Integrantes":"privado"
+                    }
+                    ]
+            },
+    "augus": {"contraseña": "5678", "reservas": {}}
 } #estructura: nombre, contraseña, reservas hechas
+#estructura reservas hechas: deporte, horario, integrantes, -1 si es privada
 
 # Constante de diccionario con los horarios posibles por deporte
 LISTA_HORARIOS = {

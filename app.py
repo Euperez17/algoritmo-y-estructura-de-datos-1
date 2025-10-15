@@ -1,7 +1,8 @@
 from constantes import USUARIOS, LISTA_HORARIOS
 from registro import registrarUsuario
-from reservas import reservar
-from reservas import mostrarReservasOcupadas
+from reservas import *
+#from reservas import mostrarReservasOcupadas
+#from reservas import mostrarMisReservas
 import getpass
 
 def main():
@@ -12,31 +13,45 @@ def main():
         registrarUsuario(USUARIOS)
 
     #login
-    usuario = input("Ingrese su nombre de usuario: ")
+    nombreUsuario = input("Ingrese su nombre de usuario: ")
     contraseña = getpass.getpass("Ingrese su contraseña: ")
-    while usuario not in USUARIOS or USUARIOS[usuario]["contraseña"] != contraseña:
+    while nombreUsuario not in USUARIOS or USUARIOS[nombreUsuario]["contraseña"] != contraseña:
         print("Usuario o contraseña incorrectos. Intente nuevamente.")
-        usuario = input("Ingrese su nombre de usuario: ")
+        nombreUsuario = input("Ingrese su nombre de usuario: ")
         contraseña = getpass.getpass("Ingrese su contraseña: ")
+    usuarioLogueado = USUARIOS[nombreUsuario]
 
     opcion = 0
-    while opcion != 3:
+    OPCION_SALIR=5 # por si añadimos mas opciones
+    while opcion != OPCION_SALIR:
         print("\n--- MENÚ PRINCIPAL ---")
         print("1. Reservar un horario")
         print("2. Ver horarios ocupados")
-        print("3. Cancelar y salir")
+        print("3. Publicar una reserva")
+        print("4. Unirse a una reserva publicada")
+        print(f"{OPCION_SALIR}. Cancelar y salir")
 
-        opcion = int(input("Elija una opción (1 - 2 - 3): "))
+        opcion = int(input(f"Elija una opción (1 - 2 - 3 - 4 - {OPCION_SALIR}): "))
 
         if opcion == 1:
-            seleccion = reservar(LISTA_HORARIOS, USUARIOS)
-            if seleccion != "CANCELAR":
-                USUARIOS[usuario]["reservas"].append(seleccion)
+            reserva = reservar(LISTA_HORARIOS, USUARIOS)
+            if reserva != "CANCELAR":
+                USUARIOS[nombreUsuario]["reservas"].append(reserva)
                 print("Reserva registrada correctamente!")
+            input("Presione Enter para continuar...")
         elif opcion == 2:
             deporte = input("Ingrese el deporte para ver las reservas (Futbol, Padel, Tenis): ")
             mostrarReservasOcupadas(USUARIOS, deporte)
+            input("Presione Enter para continuar...")
         elif opcion == 3:
+            mostrarMisReservas(usuarioLogueado)
+            publicarReserva(usuarioLogueado,nombreUsuario)
+            input("Presione Enter para continuar...")
+        elif opcion == 4:
+            unirseReserva(nombreUsuario,USUARIOS)
+            input("Presione Enter para continuar...")
+        elif opcion == OPCION_SALIR:
+            #estoy pensando aca deberia escribir en el archivo los cambios hechos en usuariologueado
             print("Adiós!")
         else:
             print("Opción no válida.")
