@@ -109,3 +109,32 @@ def publicarReserva(usuarioLogueado,nombreUsuario): #permite al usuario publicar
 
     reservaSeleccionada["Integrantes"]=[nombreUsuario]
     print("Reserva publicada! Otros usuarios pueden unirse a tu reserva ahora.")
+
+def unirseReserva(nombreUsuario,usuarios):
+    print("Reservas publicas")
+    usuariosReservas = [] #es ocmo una lista paralela al i, medio raro jiji
+    i=0
+    for nombre, data in usuarios.items():
+        if nombre != nombreUsuario:
+            for reserva in data["reservas"]:
+                indiceReserva = 0 #contador interno
+                if reserva["Integrantes"]!="privado" and nombreUsuario not in reserva["Integrantes"]: #se pone un poco confuso esto, pero basicamente muestra las reservas publicas de las que no es integrante
+                    print(f"{i+1}. {reserva['Deporte']} a las {reserva['Horario']}. Integrantes: {[integrante for integrante in reserva['Integrantes']]}")
+                    usuariosReservas.append((nombre,indiceReserva))
+                    i+=1
+                    indiceReserva+=1
+    
+    if i==0:
+        print("No hay reservas publicas!")
+    else:
+        
+        while True: #nueva tecinca para emular un do while
+            seleccion = int(input("Seleccione la reserva a la que se quiere unir: "))-1 #-1 para traducirlo a indice de la lista
+            if seleccion>i or seleccion<0:
+                print("Reserva fuera de rango. Intente de nuevo")
+            else: break
+
+        usuarioseleccionado, indiceReservaSeleccionada = usuariosReservas[seleccion]
+        usuarios[usuarioseleccionado]["reservas"][indiceReservaSeleccionada]["Integrantes"].append(nombreUsuario)
+        print("Reserva actualizada correctamente!")
+    

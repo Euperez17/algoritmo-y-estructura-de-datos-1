@@ -4,7 +4,7 @@ USUARIOS = {
               "reservas": [{ #reservas es una lista de diccionarios e integrantes contiene nombres de usuario de los integrantes
                         "Deporte": "Futbol",
                         "Horario":"20:00",
-                        "Integrantes": ["dante", "augus"]
+                        "Integrantes": ["dante"]
                     },
                     {
                         "Deporte":"Padel",

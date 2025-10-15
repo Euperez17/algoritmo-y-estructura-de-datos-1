@@ -22,15 +22,16 @@ def main():
     usuarioLogueado = USUARIOS[nombreUsuario]
 
     opcion = 0
-    OPCION_SALIR=4 # por si añadimos mas opciones
+    OPCION_SALIR=5 # por si añadimos mas opciones
     while opcion != OPCION_SALIR:
         print("\n--- MENÚ PRINCIPAL ---")
         print("1. Reservar un horario")
         print("2. Ver horarios ocupados")
         print("3. Publicar una reserva")
-        print("4. Cancelar y salir")
+        print("4. Unirse a una reserva publicada")
+        print(f"{OPCION_SALIR}. Cancelar y salir")
 
-        opcion = int(input("Elija una opción (1 - 2 - 3 - 4): "))
+        opcion = int(input(f"Elija una opción (1 - 2 - 3 - 4 - {OPCION_SALIR}): "))
 
         if opcion == 1:
             reserva = reservar(LISTA_HORARIOS, USUARIOS)
@@ -45,6 +46,9 @@ def main():
         elif opcion == 3:
             mostrarMisReservas(usuarioLogueado)
             publicarReserva(usuarioLogueado,nombreUsuario)
+            input("Presione Enter para continuar...")
+        elif opcion == 4:
+            unirseReserva(nombreUsuario,USUARIOS)
             input("Presione Enter para continuar...")
         elif opcion == OPCION_SALIR:
             #estoy pensando aca deberia escribir en el archivo los cambios hechos en usuariologueado
