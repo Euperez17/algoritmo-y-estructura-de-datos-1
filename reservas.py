@@ -1,60 +1,92 @@
 from datetime import datetime
+from constantes import CAPACIDAD_MAXIMA
+
 def buscarHorariosReservados(usuarios):
-    
     return [reserva for usuario in usuarios.values() for reserva in usuario["reservas"]]
+
+def horarioEstaOcupado(reservados, deporte, horario):
+    # Verifica si un horario especifico esta ocupado para un deporte
+    for reserva in reservados:
+        if reserva["Deporte"] == deporte and reserva["Horario"] == horario:
+            return True
+    return False
 
 def mostrarReservasDisponibles(lista, datos, deporte):
     ahora = datetime.now() # fecha y hora actual
-    hora_actual = ahora.strftime("%H:%M")
-    print(f"\nHora actual: {hora_actual}")
+    hora_actual_str = ahora.strftime("%H:%M")
+    print(f"\nHora actual: {hora_actual_str}")
     print(f"Horarios disponibles para {deporte}:")
 
     reservados = buscarHorariosReservados(datos)
 
-    # filtramos solo los horarios disponibles
-    disponibles = list(filter(lambda h: [deporte, h] not in reservados and h > hora_actual, lista[deporte]))
-    for horario in disponibles:
-        print(horario, end="  |  ")
-    print("")
+    # Crear conjunto de horarios ocupados
+    horariosOcupados = {reserva["Horario"] for reserva in reservados if reserva["Deporte"] == deporte}
+
+    # Convertir hora actual a minutos para comparacion correcta
+    hora_partes = hora_actual_str.split(":")
+    minutos_actuales = int(hora_partes[0]) * 60 + int(hora_partes[1])
+
+    # Filtrar horarios disponibles
+    disponibles = []
+    for horario in lista[deporte]:
+        if horario not in horariosOcupados:
+            # Convertir horario a minutos para comparacion
+            horario_partes = horario.split(":")
+            minutos_horario = int(horario_partes[0]) * 60 + int(horario_partes[1])
+            if minutos_horario > minutos_actuales:
+                disponibles.append(horario)
+
+    if disponibles:
+        print("  |  ".join(disponibles))
+    else:
+        print("No hay horarios disponibles.")
 
 def mostrarReservasOcupadas(DATOS, deporteBuscar):
     print(f"\nHorarios ocupados para {deporteBuscar}:")
     reservados = buscarHorariosReservados(DATOS)
-    #ocupados = [horario for deporte, horario in reservados if deporte == deporteBuscar] #h = horario, d = deporte -> chequea que horarios están ocupados por cada deporte
-    ocupados=[] #aca podriamos añadir que muestre separado las reservas publicas, o ponerlo en otro lado para poder sumarse a la reserva
-    for i in reservados:
-        if i["Deporte"].lower()==deporteBuscar.lower():
-            ocupados.append(i["Horario"])
 
-    if not ocupados:
-        print("No hay horarios reservados todavía.")
+    # Filtramos horarios ocupados
+    ocupados = [reserva["Horario"] for reserva in reservados if reserva["Deporte"].lower() == deporteBuscar.lower()]
+
+    if ocupados:
+        print(" | ".join(ocupados))
     else:
-        for h in ocupados:
-            print(h, end=" | ") 
-    print("")
+        print("No hay horarios reservados todavía.")
 
 def reservar(HORARIOS, datos):
     # Elegir deporte
     print("\nDeportes disponibles:")
     deportes = list(HORARIOS.keys())
-    for dep in deportes:
-        print(f"- {dep}")
-    deporte = input("Ingrese el deporte para ver los horarios o 'CANCELAR': ")
+    for deporte in deportes:
+        print(f"- {deporte}")
+    deporteIngresado = input("Ingrese el deporte para ver los horarios o 'CANCELAR': ").strip()
 
+    # Convertir deportes a minusculas para comparacion case insensitive
+    deportesLower = [deporteDisponible.lower() for deporteDisponible in deportes]
 
-    while deporte not in deportes and deporte.upper() != "CANCELAR":
+    while deporteIngresado.lower() not in deportesLower and deporteIngresado.upper() != "CANCELAR":
         print("Ese deporte no existe. Intente de nuevo.")
-        deporte = input("Ingrese el deporte o 'CANCELAR': ")
+        deporteIngresado = input("Ingrese el deporte o 'CANCELAR': ").strip()
 
-    if deporte.upper() == "CANCELAR":
+    if deporteIngresado.upper() == "CANCELAR":
         return "CANCELAR"
+
+    # Encontrar el deporte original con mayusculas correctas
+    for deporteOriginal in deportes:
+        if deporteOriginal.lower() == deporteIngresado.lower():
+            deporteIngresado = deporteOriginal
+            break
+
+    deporte = deporteIngresado
 
     # Elegir horario
     mostrarReservasDisponibles(HORARIOS, datos, deporte)
     seleccion = input("Indique el horario que desea reservar o 'CANCELAR': ")
 
     reservados = buscarHorariosReservados(datos)
-    while (seleccion not in HORARIOS[deporte] or [deporte, seleccion] in reservados) and seleccion.upper() != "CANCELAR":
+
+    # Usamos funcion auxiliar para verificar disponibilidad
+    while (seleccion not in HORARIOS[deporte] or horarioEstaOcupado(reservados, deporte, seleccion)) and seleccion.upper() != "CANCELAR":
         print("Ese horario no está disponible. Intente de nuevo.")
         mostrarReservasDisponibles(HORARIOS, datos, deporte)
         seleccion = input("Indique el horario que desea reservar o 'CANCELAR': ")
@@ -64,77 +96,109 @@ def reservar(HORARIOS, datos):
 
     return {"Deporte":deporte,"Horario":seleccion,"Integrantes":"privado"} #al menos por ahora, es privada por defecto
 
-def mostrarMisReservas(usuarioLogueado): #devuelve las reservas que tiene el usuario
-    reservas=usuarioLogueado["reservas"]
-    for reserva in usuarioLogueado["reservas"]:
-        integrantes = reserva["Integrantes"]
+# Devuelve las reservas que tiene el usuario
+def mostrarMisReservas(usuarioLogueado):
+    reservas = usuarioLogueado.get("reservas", [])
 
-        print(f"{reserva['Deporte']} - Horario: {reserva['Horario']} - ",end="")
-        if integrantes!="privado":
-            print(f"Integrantes: {[i for i in integrantes]}")
+    if not reservas:
+        print("No tienes reservas actualmente.")
+        return
+
+    for reserva in reservas:
+        integrantes = reserva.get("Integrantes", "privado")
+
+        print(f"{reserva['Deporte']} - Horario: {reserva['Horario']} - ", end="")
+        if integrantes != "privado":
+            # Usar join() para mostrar integrantes de forma mas clara
+            print(f"Integrantes: {', '.join(integrantes)}")
         else:
             print("Privada")
 
-def publicarReserva(usuarioLogueado,nombreUsuario): #permite al usuario publicar una reserva privada que haya hecho 
-    #hacer esta funcion me hace soñar con un menu dropdown 
+def publicarReserva(usuarioLogueado, nombreUsuario):
+    # Filtrar las reservas privadas del usuario
+    reservas = usuarioLogueado.get("reservas", [])
+    reservasPrivadas = [reserva for reserva in reservas if reserva.get("Integrantes") == "privado"]
 
-    deportesConReservaPrivada = [reserva["Deporte"] for reserva in usuarioLogueado["reservas"] if reserva["Integrantes"]=="privado"]
-    if len(deportesConReservaPrivada)<1:
-        print("Ups! No tienes reservas privadas!") # es una MUY mala forma de chequear si no tiene reservas privadas jajajaja
-        return #esto me da arcadas
-    deporte = input("Indique deporte de la reserva: ")
+    if not reservasPrivadas:
+        print("Ups! No tienes reservas privadas para publicar.")
+        return
 
-    while deporte not in deportesConReservaPrivada:
-        print("No tienes reservas privadas para ese deporte")
-        deporte = input("Indique deporte de la reserva: ")
-        
+    print("\nTus reservas privadas:")
+    for indice, reserva in enumerate(reservasPrivadas, start=1):
+        print(f"{indice}. {reserva['Deporte']} - {reserva['Horario']}")
 
-    reservasDeporte = [reserva for reserva in usuarioLogueado["reservas"] if reserva["Deporte"].lower() == deporte.lower()]
-    horario = input("Indique horario de la reserva: ")
-    
-    reservaSeleccionada=None
-    for reserva in reservasDeporte:
-        if reserva["Horario"]==horario:
-            reservaSeleccionada=reserva
-            break
+    try:
+        seleccion = int(input("Seleccione el número de la reserva que desea publicar: ")) - 1
+        if seleccion < 0 or seleccion >= len(reservasPrivadas):
+            print("Selección inválida.")
+            return
+    except ValueError:
+        print("Debe ingresar un número válido.")
+        return
 
-    while not reservaSeleccionada:
-        print("No tienes una reserva privada para ese horario.")
-        horario = input("Indique horario de la reserva: ")
-        reservaSeleccionada=None
-        for reserva in reservasDeporte:
-            if reserva["Horario"]==horario:
-                reservaSeleccionada=reserva
-                break
+    reservaSeleccionada = reservasPrivadas[seleccion]
+    deporte = reservaSeleccionada["Deporte"]
 
-    reservaSeleccionada["Integrantes"]=[nombreUsuario]
-    print("Reserva publicada! Otros usuarios pueden unirse a tu reserva ahora.")
+    # Convertimos la reserva a publica
+    reservaSeleccionada["Integrantes"] = [nombreUsuario]
+    capacidad = CAPACIDAD_MAXIMA.get(deporte, 0)  # Acceso seguro con valor por defecto
+    reservaSeleccionada["CupoMaximo"] = capacidad
+    print(f"\nReserva publicada! Otros usuarios pueden unirse hasta completar {capacidad} integrantes.")
 
-def unirseReserva(nombreUsuario,usuarios):
+def unirseReserva(nombreUsuario, usuarios):
     print("Reservas publicas")
-    usuariosReservas = [] #es ocmo una lista paralela al i, medio raro jiji
-    i=0
-    for nombre, data in usuarios.items():
-        if nombre != nombreUsuario:
-            for reserva in data["reservas"]:
-                indiceReserva = 0 #contador interno
-                if reserva["Integrantes"]!="privado" and nombreUsuario not in reserva["Integrantes"]: #se pone un poco confuso esto, pero basicamente muestra las reservas publicas de las que no es integrante
-                    print(f"{i+1}. {reserva['Deporte']} a las {reserva['Horario']}. Integrantes: {[integrante for integrante in reserva['Integrantes']]}")
-                    usuariosReservas.append((nombre,indiceReserva))
-                    i+=1
-                    indiceReserva+=1
+    usuariosReservas = []  # Lista de tuplas (nombreUsuario, indiceReserva)
+    contador = 0
+
+    for nombreUsuarioPropietario, datosUsuario in usuarios.items():
+        if nombreUsuarioPropietario != nombreUsuario:
+            reservasUsuario = datosUsuario.get("reservas", [])
+            indiceReserva = 0
+
+            for reserva in reservasUsuario:
+                integrantes = reserva.get("Integrantes", "privado")
+                # Mostrar solo reservas publicas de las que no es integrante
+                if integrantes != "privado" and nombreUsuario not in integrantes:
+                    listaIntegrantes = ', '.join(integrantes)
+                    print(f"{contador + 1}. {reserva['Deporte']} a las {reserva['Horario']}. Integrantes: {listaIntegrantes}")
+                    usuariosReservas.append((nombreUsuarioPropietario, indiceReserva))
+                    contador += 1
+                indiceReserva += 1
     
-    if i==0:
+    if contador == 0:
         print("No hay reservas publicas!")
     else:
-        
-        while True: #nueva tecinca para emular un do while
-            seleccion = int(input("Seleccione la reserva a la que se quiere unir: "))-1 #-1 para traducirlo a indice de la lista
-            if seleccion>i or seleccion<0:
-                print("Reserva fuera de rango. Intente de nuevo")
-            else: break
 
-        usuarioseleccionado, indiceReservaSeleccionada = usuariosReservas[seleccion]
-        usuarios[usuarioseleccionado]["reservas"][indiceReservaSeleccionada]["Integrantes"].append(nombreUsuario)
-        print("Reserva actualizada correctamente!")
+        while True:  # Tecnica para emular un do-while
+            try:
+                seleccion = int(input("Seleccione la reserva a la que se quiere unir: ")) - 1
+                if seleccion >= contador or seleccion < 0:
+                    print("Reserva fuera de rango. Intente de nuevo")
+                else:
+                    break
+            except ValueError:
+                print("Debe ingresar un número válido.")
+
+        usuarioSeleccionado, indiceReservaSeleccionada = usuariosReservas[seleccion]
+        reservaSeleccionada = usuarios[usuarioSeleccionado]["reservas"][indiceReservaSeleccionada]
+
+        # Verificar si la reserva tiene CupoMaximo, si no asignarlo según el deporte
+        cupoMaximo = reservaSeleccionada.get("CupoMaximo", None)
+        if cupoMaximo is None:
+            deporte = reservaSeleccionada.get("Deporte", "")
+            cupoMaximo = CAPACIDAD_MAXIMA.get(deporte, 0)
+            if cupoMaximo > 0:
+                reservaSeleccionada["CupoMaximo"] = cupoMaximo
+                print(f"Advertencia: Se asignó cupo máximo de {cupoMaximo} a esta reserva de {deporte}.")
+            else:
+                print(f"Error: No se pudo determinar la capacidad para el deporte '{deporte}'.")
+                return
+
+        integrantesActuales = len(reservaSeleccionada["Integrantes"])
+
+        if integrantesActuales >= cupoMaximo:
+            print(f"Lo siento, la reserva ya alcanzó su capacidad máxima de {cupoMaximo} integrantes.")
+        else:
+            reservaSeleccionada["Integrantes"].append(nombreUsuario)
+            print(f"Reserva actualizada correctamente! Ahora son {integrantesActuales + 1}/{cupoMaximo} integrantes.")
     
