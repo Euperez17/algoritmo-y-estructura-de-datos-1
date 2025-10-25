@@ -1,11 +1,13 @@
-from constantes import USUARIOS, LISTA_HORARIOS
+#from constantes import USUARIOS, LISTA_HORARIOS
+import json
 from registro import registrarUsuario
 from reservas import *
-from utilidades import limpiarConsola
+from utilidades import limpiarConsola, getDatos,guardarDatos
 import getpass
 
 def main():
     #Comienzo del programa
+    USUARIOS,LISTA_HORARIOS = getDatos()
     limpiarConsola()
     print("Bienvenido al sistema de reservas de turnos.")
     cuenta = input("Ya tienes una cuenta? (S/N): ")
@@ -18,7 +20,7 @@ def main():
     print("=== LOGIN ===")
     nombreUsuario = input("Ingrese su nombre de usuario: ")
     contraseña = getpass.getpass("Ingrese su contraseña: ")
-    while nombreUsuario not in USUARIOS or USUARIOS[nombreUsuario]["contraseña"] != contraseña:
+    while nombreUsuario not in USUARIOS or USUARIOS[nombreUsuario]["contrasena"] != contraseña: #muy importante: JSON no entiende la ñ, asi que esta cambiado a contrasena dentro del diccionario
         print("Usuario o contraseña incorrectos. Intente nuevamente.")
         nombreUsuario = input("Ingrese su nombre de usuario: ")
         contraseña = getpass.getpass("Ingrese su contraseña: ")
@@ -71,7 +73,7 @@ def main():
             limpiarConsola()
         elif opcion == OPCION_SALIR:
             limpiarConsola()
-            #estoy pensando aca deberia escribir en el archivo los cambios hechos en usuariologueado
+            guardarDatos(USUARIOS)
             print("Adiós!")
         else:
             print("Opción no válida.")

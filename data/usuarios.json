@@ -1,0 +1,36 @@
+{
+    "dante": {
+        "contrasena": "1234",
+        "reservas": [
+            {
+                "Deporte": "Futbol",
+                "Horario": "20:00",
+                "Integrantes": [
+                    "dante"
+                ],
+                "CupoMaximo": 22
+            },
+            {
+                "Deporte": "Padel",
+                "Horario": "08:00",
+                "Integrantes": [
+                    "dante"
+                ],
+                "CupoMaximo": 4
+            },
+            {
+                "Deporte": "Tenis",
+                "Horario": "22:00",
+                "Integrantes": [
+                    "dante",
+                    "augus"
+                ],
+                "CupoMaximo": 4
+            }
+        ]
+    },
+    "augus": {
+        "contrasena": "5678",
+        "reservas": []
+    }
+}

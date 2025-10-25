@@ -19,6 +19,6 @@ def registrarUsuario(datos):
             print("La contraseña debe tener al menos 4 caracteres.")
             contraseña = getpass.getpass("Ingrese una contraseña segura (mínimo 4 caracteres): ")
 
-        datos[usuario] = {"contraseña" : contraseña, "reservas": []}
+        datos[usuario] = {"contrasena" : contraseña, "reservas": []}
 
         print("Cuenta creada exitosamente!")
