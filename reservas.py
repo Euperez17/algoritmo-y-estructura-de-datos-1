@@ -1,5 +1,6 @@
 from datetime import datetime
-from constantes import CAPACIDAD_MAXIMA
+#from constantes import CAPACIDAD_MAXIMA
+from utilidades import getCapacidadMaxima
 
 def buscarHorariosReservados(usuarios):
     return [reserva for usuario in usuarios.values() for reserva in usuario["reservas"]]
@@ -141,6 +142,7 @@ def publicarReserva(usuarioLogueado, nombreUsuario):
 
     # Convertimos la reserva a publica
     reservaSeleccionada["Integrantes"] = [nombreUsuario]
+    CAPACIDAD_MAXIMA = getCapacidadMaxima()
     capacidad = CAPACIDAD_MAXIMA.get(deporte, 0)  # Acceso seguro con valor por defecto
     reservaSeleccionada["CupoMaximo"] = capacidad
     print(f"\nReserva publicada! Otros usuarios pueden unirse hasta completar {capacidad} integrantes.")
@@ -186,6 +188,7 @@ def unirseReserva(nombreUsuario, usuarios):
         cupoMaximo = reservaSeleccionada.get("CupoMaximo", None)
         if cupoMaximo is None:
             deporte = reservaSeleccionada.get("Deporte", "")
+            CAPACIDAD_MAXIMA = getCapacidadMaxima()
             cupoMaximo = CAPACIDAD_MAXIMA.get(deporte, 0)
             if cupoMaximo > 0:
                 reservaSeleccionada["CupoMaximo"] = cupoMaximo

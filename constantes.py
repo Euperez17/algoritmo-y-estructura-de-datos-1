@@ -1,4 +1,4 @@
-# Hasta que aprendamos a usar archivos, hardcodeamos este diccionario para el login
+# deprecated (creo que use bien la palabra) 
 USUARIOS = {
     "dante": {"contraseña": "1234",
               "reservas": [{ #reservas es una lista de diccionarios e integrantes contiene nombres de usuario de los integrantes
