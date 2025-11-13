@@ -173,7 +173,7 @@ def unirseReserva(nombreUsuario, usuarios):
         print("No hay reservas publicas!")
     else:
 
-        while True: #Tecnica para emular un do-while
+        while True: #Tecnica para emular un do-while (no le va a gustar a la profe)
             try:
                 seleccion = int(input("Seleccione la reserva a la que se quiere unir: ")) - 1
                 if seleccion >= contador or seleccion < 0: #verificamos que la seleccion esté dentro del rango

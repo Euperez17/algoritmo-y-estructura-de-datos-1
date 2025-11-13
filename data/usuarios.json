@@ -31,6 +31,15 @@
     },
     "augus": {
         "contrasena": "5678",
-        "reservas": []
+        "reservas": [
+            {
+                "Deporte": "Futbol",
+                "Horario": "14:00",
+                "Integrantes": [
+                    "augus"
+                ],
+                "CupoMaximo": 22
+            }
+        ]
     }
 }
