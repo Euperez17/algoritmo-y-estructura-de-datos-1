@@ -15,6 +15,10 @@ def main():
     limpiarConsola()
     print("Bienvenido al sistema de reservas de turnos.")
     tieneCuenta = input("Ya tienes una cuenta? (S/N): ")
+    while tieneCuenta.lower() not in ["s","n"]:
+        print("Respuesta no válida. Por favor ingrese 'S' o 'N'.")
+        tieneCuenta = input("Ya tienes una cuenta? (S/N): ")
+    
     if (tieneCuenta.lower() == "n"):
         limpiarConsola()
         registrarUsuario(USUARIOS) #agrega un nuevo usuario al diccionario USUARIOS
