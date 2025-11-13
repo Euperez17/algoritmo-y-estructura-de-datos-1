@@ -115,7 +115,7 @@ def reservar(dictHorarios, dictUsuarios):
     if seleccion.upper() == "CANCELAR":
         return "CANCELAR"
 
-    return {"Deporte":deporte,"Horario":seleccion,"Integrantes":"privado","Pagado":False} #al menos por ahora, es privada por defecto y no pagada
+    return {"Deporte":deporteIngresado,"Horario":seleccion,"Integrantes":"privado","Pagado":False} #al menos por ahora, es privada por defecto y no pagada
 
 def mostrarMisReservas(usuarioLogueado):
     """

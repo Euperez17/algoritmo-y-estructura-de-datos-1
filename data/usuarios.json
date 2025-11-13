@@ -26,6 +26,18 @@
                     "augus"
                 ],
                 "CupoMaximo": 4
+            },
+            {
+                "Deporte": "Tenis",
+                "Horario": "21:30",
+                "Integrantes": "privado",
+                "Pagado": false
+            },
+            {
+                "Deporte": "Futbol",
+                "Horario": "21:30",
+                "Integrantes": "privado",
+                "Pagado": false
             }
         ]
     },
