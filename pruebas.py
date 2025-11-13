@@ -25,7 +25,7 @@ def test_horario_esta_ocupado(): #Prueba la función horarioEstaOcupado.
         {"Deporte": "Tenis", "Horario": "14:00"},
         {"Deporte": "Futbol", "Horario": "15:00"}
     ]
-    assert horarioEstaOcupado(reservados, "Tenis", "14:00") == True, "Debe detectar horario ocupado" #tenis 14:00 está ocupado
+    assert horarioEstaOcupado(reservados, "Tenis", "14:00") == True, "Debe detectarh9o  horario ocupado" #tenis 14:00 está ocupado
     assert horarioEstaOcupado(reservados, "Tenis", "16:00") == False, "Debe detectar horario libre" #tenis 16:00 debería estar libre
     assert horarioEstaOcupado(reservados, "Padel", "14:00") == False, "Debe detectar horario libre para otro deporte" #padel 14:00 debería estar libre
 
