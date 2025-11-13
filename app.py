@@ -54,17 +54,18 @@ def main():
     print(f"Bienvenido, {nombreUsuario}!") #damos la bienvenida al usuario
 
     opcion = 0
-    OPCION_SALIR=5 #por si añadimos mas opciones
+    OPCION_SALIR=6 #por si añadimos mas opciones
     while opcion != OPCION_SALIR:
         print("\n--- MENÚ PRINCIPAL ---")
         print("1. Reservar un horario")
         print("2. Ver horarios ocupados")
         print("3. Publicar una reserva")
         print("4. Unirse a una reserva publicada")
+        print("5. Confirmar pago de reserva")
         print(f"{OPCION_SALIR}. Cancelar y salir")
 
         try: #este try es para evitar que el programa falle si el usuario ingresa algo que no es un numero
-            opcion = int(input(f"Elija una opción (1 - 2 - 3 - 4 - {OPCION_SALIR}): "))
+            opcion = int(input(f"Elija una opción (1 - 2 - 3 - 4 - 5 - {OPCION_SALIR}): "))
         except ValueError:
             print("Debe ingresar un número válido.")
             opcion = 0
@@ -94,6 +95,12 @@ def main():
         elif opcion == 4: #unirse a una reserva publicada
             limpiarConsola()
             unirseReserva(nombreUsuario,USUARIOS) #permite al usuario logueado unirse a una reserva publica
+            input("Presione Enter para continuar...")
+            limpiarConsola()
+        elif opcion == 5: #confirmar pago de una reserva
+            limpiarConsola()
+            mostrarMisReservas(usuarioLogueado) #muestra las reservas del usuario logueado
+            confirmarPagoReserva(usuarioLogueado) #marca una reserva como pagada
             input("Presione Enter para continuar...")
             limpiarConsola()
         elif opcion == OPCION_SALIR: #salir del programa

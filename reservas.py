@@ -115,7 +115,7 @@ def reservar(dictHorarios, dictUsuarios):
     if seleccion.upper() == "CANCELAR":
         return "CANCELAR"
 
-    return {"Deporte":deporteIngresado,"Horario":seleccion,"Integrantes":"privado"} #al menos por ahora, es privada por defecto
+    return {"Deporte":deporte,"Horario":seleccion,"Integrantes":"privado","Pagado":False} #al menos por ahora, es privada por defecto y no pagada
 
 def mostrarMisReservas(usuarioLogueado):
     """
@@ -129,13 +129,14 @@ def mostrarMisReservas(usuarioLogueado):
 
     for reserva in reservas:
         integrantes = reserva.get("Integrantes", "privado")
+        estadoPago = "Pagado" if reserva.get("Pagado", False) else "No Pagado"
 
         print(f"{reserva['Deporte']} - Horario: {reserva['Horario']} - ", end="")
         if integrantes != "privado":
             # Usamos join() para mostrar integrantes de forma mas clara
-            print(f"Integrantes: {', '.join(integrantes)}")
+            print(f"Integrantes: {', '.join(integrantes)} - {estadoPago}")
         else:
-            print("Privada")
+            print(f"Privada - {estadoPago}")
 
 def publicarReserva(usuarioLogueado, nombreUsuario):
     """
@@ -176,6 +177,38 @@ def publicarReserva(usuarioLogueado, nombreUsuario):
     capacidad = CAPACIDAD_MAXIMA.get(deporte, 0)  # Acceso seguro con valor por defecto
     reservaSeleccionada["CupoMaximo"] = capacidad
     print(f"\nReserva publicada! Otros usuarios pueden unirse hasta completar {capacidad} integrantes.")
+
+def confirmarPagoReserva(usuarioLogueado):
+    # Filtramos las reservas no pagadas del usuario
+    reservas = usuarioLogueado.get("reservas", [])
+    reservasNoPagadas = [reserva for reserva in reservas if not reserva.get("Pagado", False)]
+
+    if not reservasNoPagadas:
+        print("No tienes reservas pendientes de pago.")
+        return
+
+    print("\nTus reservas pendientes de pago:")
+    indice = 1
+    for reserva in reservasNoPagadas:
+        integrantes = reserva.get("Integrantes", "privado")
+        if integrantes != "privado":
+            print(f"{indice}. {reserva['Deporte']} - {reserva['Horario']} - Integrantes: {', '.join(integrantes)}")
+        else:
+            print(f"{indice}. {reserva['Deporte']} - {reserva['Horario']} - Privada")
+        indice += 1
+
+    try:
+        seleccion = int(input("Seleccione el número de la reserva que desea marcar como pagada: ")) - 1
+        if seleccion < 0 or seleccion >= len(reservasNoPagadas):
+            print("Selección inválida.")
+            return
+    except ValueError:
+        print("Debe ingresar un número válido.")
+        return
+
+    reservaSeleccionada = reservasNoPagadas[seleccion]
+    reservaSeleccionada["Pagado"] = True
+    print(f"\nReserva de {reservaSeleccionada['Deporte']} a las {reservaSeleccionada['Horario']} marcada como pagada!")
 
 def unirseReserva(nombreUsuario, usuarios):
     """
