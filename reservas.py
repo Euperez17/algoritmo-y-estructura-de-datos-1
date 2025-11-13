@@ -1,27 +1,41 @@
+"""
+Módulo de gestión de reservas
+Funciones para crear, visualizar y administrar reservas de canchas deportivas
+"""
 from datetime import datetime
 #from constantes import CAPACIDAD_MAXIMA
 from utilidades import getCapacidadMaxima
 
 def buscarHorariosReservados(usuarios):
-    return [reserva for usuario in usuarios.values() for reserva in usuario["reservas"]] #lista de todas las reservas hechas por todos los usuarios
+    """
+    Busca todas las reservas realizadas por todos los usuarios.
+    Devuelve: Lista con todas las reservas del sistema
+    """
+    return [reserva for usuario in usuarios.values() for reserva in usuario.get("reservas", [])] #lista de todas las reservas hechas por todos los usuarios
 
 def horarioEstaOcupado(reservados, deporte, horario):
-    # Verifica si un horario especifico esta ocupado para un deporte
+    """
+    Verifica si un horario especifico esta ocupado para un deporte.
+    Devuelve: True si el horario esta ocupado, False en caso contrario
+    """
     for reserva in reservados:
-        if reserva["Deporte"] == deporte and reserva["Horario"] == horario: #si el deporte y el horario coinciden
+        if reserva.get("Deporte", "") == deporte and reserva.get("Horario", "") == horario: #si el deporte y el horario coinciden
             return True
     return False
 
-def mostrarReservasDisponibles(lista, datos, deporte): #muestra los horarios disponibles para un deporte según la hora actual
+def mostrarReservasDisponibles(dictHorarios, dictUsuarios, deporte):
+    """
+    Muestra los horarios disponibles para un deporte segun la hora actual.
+    """
     ahora = datetime.now() # fecha y hora actual
     hora_actual_str = ahora.strftime("%H:%M")
     print(f"\nHora actual: {hora_actual_str}") #muestra la hora actual
     print(f"Horarios disponibles para {deporte}:") #horarios disponibles para el deporte seleccionado según la hora actual
 
-    reservados = buscarHorariosReservados(datos) #obtenemos todas las reservas hechas por todos los usuarios
+    reservados = buscarHorariosReservados(dictUsuarios) #obtenemos todas las reservas hechas por todos los usuarios
 
     # Crear conjunto de horarios ocupados para el deporte seleccionado
-    horariosOcupados = {reserva["Horario"] for reserva in reservados if reserva["Deporte"] == deporte} 
+    horariosOcupados = {reserva["Horario"] for reserva in reservados if reserva["Deporte"] == deporte}
 
     # Convertir hora actual a minutos para comparacion correcta
     hora_partes = hora_actual_str.split(":")
@@ -29,7 +43,7 @@ def mostrarReservasDisponibles(lista, datos, deporte): #muestra los horarios dis
 
     # Filtrar horarios disponibles
     disponibles = []
-    for horario in lista[deporte]:
+    for horario in dictHorarios[deporte]:
         if horario not in horariosOcupados:
             # Convertir horario a minutos para comparacion
             horario_partes = horario.split(":")
@@ -42,9 +56,12 @@ def mostrarReservasDisponibles(lista, datos, deporte): #muestra los horarios dis
     else:
         print("No hay horarios disponibles.")
 
-def mostrarReservasOcupadas(DATOS, deporteBuscar):
+def mostrarReservasOcupadas(dictUsuarios, deporteBuscar):
+    """
+    Muestra los horarios ocupados para un deporte especifico.
+    """
     print(f"\nHorarios ocupados para {deporteBuscar}:")
-    reservados = buscarHorariosReservados(DATOS) #obtenemos todas las reservas hechas por todos los usuarios
+    reservados = buscarHorariosReservados(dictUsuarios) #obtenemos todas las reservas hechas por todos los usuarios
 
     # Filtramos horarios ocupados
     ocupados = [reserva["Horario"] for reserva in reservados if reserva["Deporte"].lower() == deporteBuscar.lower()]
@@ -54,10 +71,14 @@ def mostrarReservasOcupadas(DATOS, deporteBuscar):
     else:
         print("No hay horarios reservados todavía.")
 
-def reservar(HORARIOS, datos):
+def reservar(dictHorarios, dictUsuarios):
+    """
+    Permite al usuario reservar un horario para un deporte.
+    Devuelve: Diccionario con la reserva creada o "CANCELAR" si se cancela
+    """
     # Elegir deporte
     print("\nDeportes disponibles:")
-    deportes = list(HORARIOS.keys()) #obtenemos la lista de deportes disponibles
+    deportes = list(dictHorarios.keys()) #obtenemos la lista de deportes disponibles
     for deporte in deportes:
         print(f"- {deporte}") #printeamos los deportes del complejo
     deporteIngresado = input("Ingrese el deporte para ver los horarios o 'CANCELAR': ").strip()
@@ -79,19 +100,16 @@ def reservar(HORARIOS, datos):
             deporteIngresado = deporteOriginal
             break
 
-    deporte = deporteIngresado
-
-
     # Elegir horario
-    mostrarReservasDisponibles(HORARIOS, datos, deporte)
+    mostrarReservasDisponibles(dictHorarios, dictUsuarios, deporteIngresado)
     seleccion = input("Indique el horario que desea reservar o 'CANCELAR': ")
 
-    reservados = buscarHorariosReservados(datos)
+    reservados = buscarHorariosReservados(dictUsuarios)
 
     # Usamos funcion auxiliar para verificar disponibilidad
-    while (seleccion not in HORARIOS[deporte] or horarioEstaOcupado(reservados, deporte, seleccion)) and seleccion.upper() != "CANCELAR":
+    while (seleccion not in dictHorarios[deporteIngresado] or horarioEstaOcupado(reservados, deporteIngresado, seleccion)) and seleccion.upper() != "CANCELAR":
         print("Ese horario no está disponible. Intente de nuevo.")
-        mostrarReservasDisponibles(HORARIOS, datos, deporte)
+        mostrarReservasDisponibles(dictHorarios, dictUsuarios, deporteIngresado)
         seleccion = input("Indique el horario que desea reservar o 'CANCELAR': ")
 
     if seleccion.upper() == "CANCELAR":
@@ -99,8 +117,10 @@ def reservar(HORARIOS, datos):
 
     return {"Deporte":deporte,"Horario":seleccion,"Integrantes":"privado","Pagado":False} #al menos por ahora, es privada por defecto y no pagada
 
-# Devuelve las reservas que tiene el usuario
 def mostrarMisReservas(usuarioLogueado):
+    """
+    Muestra las reservas del usuario logueado.
+    """
     reservas = usuarioLogueado.get("reservas", [])
 
     if not reservas:
@@ -119,6 +139,9 @@ def mostrarMisReservas(usuarioLogueado):
             print(f"Privada - {estadoPago}")
 
 def publicarReserva(usuarioLogueado, nombreUsuario):
+    """
+    Permite al usuario publicar una reserva privada para que otros se unan.
+    """
     # Filtramos las reservas privadas del usuario
     reservas = usuarioLogueado.get("reservas", [])
     reservasPrivadas = [reserva for reserva in reservas if reserva.get("Integrantes") == "privado"]  #lista de reservas privadas
@@ -127,12 +150,17 @@ def publicarReserva(usuarioLogueado, nombreUsuario):
         print("Ups! No tienes reservas privadas para publicar.")
         return
 
-    print("\nTus reservas privadas:") 
+    print("\nTus reservas privadas:")
     for indice, reserva in enumerate(reservasPrivadas, start=1): #mostramos las reservas privadas con un indice
         print(f"{indice}. {reserva['Deporte']} - {reserva['Horario']}") #printeamos el indice, deporte y horario de la reserva privada
 
+    seleccionInput = input("Seleccione el número de la reserva que desea publicar o '0' para cancelar: ")
+
+    if seleccionInput == "0":
+        print("Operación cancelada.")
+        return
     try:
-        seleccion = int(input("Seleccione el número de la reserva que desea publicar: ")) - 1
+        seleccion = int(seleccionInput) - 1
         if seleccion < 0 or seleccion >= len(reservasPrivadas): #verificamos que la seleccion esté dentro del rango, sino, mostramos un error
             print("Selección inválida.")
             return
@@ -183,6 +211,9 @@ def confirmarPagoReserva(usuarioLogueado):
     print(f"\nReserva de {reservaSeleccionada['Deporte']} a las {reservaSeleccionada['Horario']} marcada como pagada!")
 
 def unirseReserva(nombreUsuario, usuarios):
+    """
+    Permite al usuario unirse a una reserva publica de otro usuario.
+    """
     print("Reservas publicas")
     usuariosReservas = []  # Lista de tuplas (nombreUsuario, indiceReserva)
     contador = 0
@@ -205,10 +236,15 @@ def unirseReserva(nombreUsuario, usuarios):
     if contador == 0:
         print("No hay reservas publicas!")
     else:
-
         while True: #Tecnica para emular un do-while (no le va a gustar a la profe)
+            seleccionInput = input("Seleccione la reserva a la que se quiere unir o '0' para cancelar: ")
+
+            if seleccionInput == "0":
+                print("Operación cancelada.")
+                return
+
             try:
-                seleccion = int(input("Seleccione la reserva a la que se quiere unir: ")) - 1
+                seleccion = int(seleccionInput) - 1
                 if seleccion >= contador or seleccion < 0: #verificamos que la seleccion esté dentro del rango
                     print("Reserva fuera de rango. Intente de nuevo")
                 else:
@@ -239,4 +275,3 @@ def unirseReserva(nombreUsuario, usuarios):
         else:
             reservaSeleccionada["Integrantes"].append(nombreUsuario)
             print(f"Reserva actualizada correctamente! Ahora son {integrantesActuales + 1}/{cupoMaximo} integrantes.")
-    
