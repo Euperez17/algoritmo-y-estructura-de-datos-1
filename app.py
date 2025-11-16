@@ -10,42 +10,73 @@ Sistema de reservas de canchas deportivas
 Programa principal que gestiona el registro, login y reservas de usuarios
 """
 def main():
-    #Comienzo del programa
-    USUARIOS,LISTA_HORARIOS = cargarDatosIniciales() #carga los datos desde el archivo JSON
-    limpiarConsola()
-    print("Bienvenido al sistema de reservas de turnos.")
-    tieneCuenta = input("Ya tienes una cuenta? (S/N): ")
-    while tieneCuenta.lower() not in ["s","n"]:
-        print("Respuesta no válida. Por favor ingrese 'S' o 'N'.")
-        tieneCuenta = input("Ya tienes una cuenta? (S/N): ")
-    
-    if (tieneCuenta.lower() == "n"):
+    USUARIOS, LISTA_HORARIOS = cargarDatosIniciales()
+    nombreUsuarioReal = None # Guardará los datos del usuario logueado
+
+    while nombreUsuarioReal is None: # Bucle principal: se repite hasta que el login sea exitoso
         limpiarConsola()
-        registrarUsuario(USUARIOS) #agrega un nuevo usuario al diccionario USUARIOS
-        guardarUsuarios(USUARIOS) #guarda el nuevo usuario en el archivo JSON
-        print("Usuario registrado exitosamente.")
-
-    #login
-    limpiarConsola()
-    print("=== LOGIN ===")
-    nombreUsuario = input("Ingrese su nombre de usuario: ").strip()
-    contraseña = getpass.getpass("Ingrese su contraseña: ")
-
-    # Buscar el usuario comparando en minusculas (case insensitive)
-    nombreUsuarioReal = ""
-    for usuario in USUARIOS:
-        if usuario.lower() == nombreUsuario.lower():
-            nombreUsuarioReal = usuario
-
-    while nombreUsuarioReal == "" or USUARIOS[nombreUsuarioReal]["contrasena"] != contraseña: #muy importante: JSON no entiende la ñ, asi que esta cambiado a contrasena dentro del diccionario
-        print("Usuario o contraseña incorrectos. Intente nuevamente.")
+        print("Bienvenido al sistema de reservas de turnos.")
+        print("-" * 30)
+        
+        tieneCuenta = input("Ya tenés una cuenta? (S/N): ")
+        while tieneCuenta.lower() not in ["s", "n"]:
+            print("Respuesta no válida. Por favor ingrese 'S' o 'N'.")
+            tieneCuenta = input("Ya tenés una cuenta? (S/N): ")
+    
+    
+    
+        # --- REGISTRO ---
+        if tieneCuenta.lower() == "n":
+            limpiarConsola()
+            
+            # 'registrarUsuario' debe devolver True si fue exitoso,
+            # o False si el usuario canceló.
+            exito_registro = registrarUsuario(USUARIOS) 
+            
+            if not exito_registro: # Si el usuario canceló (función devolvió False)
+                print("Registro cancelado. Volviendo al menú principal.")
+                continue # Vuelve al inicio del bucle 'while' (la pregunta S/N)
+            
+            # Si el registro fue exitoso
+            guardarUsuarios(USUARIOS)
+            print("Usuario registrado exitosamente. Ahora, por favor iniciá sesión.")
+            # El código sigue naturalmente hacia la sección de LOGIN
+    
+        # --- LOGIN ---
+        # Se llega aquí si tieneCuenta == 's' O si el registro fue exitoso
+        limpiarConsola()
+        print("=== LOGIN ===")
+        print("(Escriba 'cancelar' para volver al menú anterior)")
+        
         nombreUsuario = input("Ingrese su nombre de usuario: ").strip()
+        if nombreUsuario.lower() == "cancelar":
+            continue 
+        
         contraseña = getpass.getpass("Ingrese su contraseña: ")
-        # Buscar el usuario nuevamente
+        if contraseña.lower() == "cancelar": 
+            continue 
+
+        # Buscar el usuario comparando en minusculas (case insensitive)
         nombreUsuarioReal = ""
         for usuario in USUARIOS:
             if usuario.lower() == nombreUsuario.lower():
                 nombreUsuarioReal = usuario
+
+        while nombreUsuarioReal == "" or USUARIOS[nombreUsuarioReal]["contrasena"] != contraseña: #muy importante: JSON no entiende la ñ, asi que esta cambiado a contrasena dentro del diccionario
+            print("Usuario o contraseña incorrectos. Intente nuevamente, o escriba 'cancelar' para volver al menú anterior.")
+            nombreUsuario = input("Ingrese su nombre de usuario: ").strip()
+            if nombreUsuario.lower() == "cancelar":
+                nombreUsuarioReal = None
+                break 
+            contraseña = getpass.getpass("Ingrese su contraseña: ")
+            if contraseña.lower() == "cancelar":
+                nombreUsuarioReal = None
+                break
+            # Buscar el usuario nuevamente
+            nombreUsuarioReal = ""
+            for usuario in USUARIOS:
+                if usuario.lower() == nombreUsuario.lower():
+                    nombreUsuarioReal = usuario
 
     usuarioLogueado = USUARIOS[nombreUsuarioReal] #obtenemos el diccionario del usuario logueado
     nombreUsuario = nombreUsuarioReal #usamos el nombre real del usuario para las operaciones
@@ -62,7 +93,8 @@ def main():
         print("3. Publicar una reserva")
         print("4. Unirse a una reserva publicada")
         print("5. Confirmar pago de reserva")
-        print(f"{OPCION_SALIR}. Cancelar y salir")
+        print(f"{OPCION_SALIR}. Salir")
+        
 
         try: #este try es para evitar que el programa falle si el usuario ingresa algo que no es un numero
             opcion = int(input(f"Elija una opción (1 - 2 - 3 - 4 - 5 - {OPCION_SALIR}): "))
@@ -70,12 +102,13 @@ def main():
             print("Debe ingresar un número válido.")
             opcion = 0
             continue
-
+        
         if opcion == 1: #reservar un horario
             limpiarConsola()
             reserva = reservar(LISTA_HORARIOS, USUARIOS)
             if reserva != "CANCELAR":
                 USUARIOS[nombreUsuario]["reservas"].append(reserva) #agregamos la reserva al usuario logueado
+                guardarUsuarios(USUARIOS)
                 print("Reserva registrada correctamente!")
             input("Presione Enter para continuar...")
             limpiarConsola()
@@ -90,17 +123,20 @@ def main():
             limpiarConsola()
             mostrarMisReservas(usuarioLogueado) #muestra las reservas del usuario logueado
             publicarReserva(usuarioLogueado,nombreUsuario) #publica una reserva privada del usuario logueado
+            guardarUsuarios(USUARIOS)
             input("Presione Enter para continuar...")
             limpiarConsola()
         elif opcion == 4: #unirse a una reserva publicada
             limpiarConsola()
             unirseReserva(nombreUsuario,USUARIOS) #permite al usuario logueado unirse a una reserva publica
+            guardarUsuarios(USUARIOS)
             input("Presione Enter para continuar...")
             limpiarConsola()
         elif opcion == 5: #confirmar pago de una reserva
             limpiarConsola()
             mostrarMisReservas(usuarioLogueado) #muestra las reservas del usuario logueado
             confirmarPagoReserva(usuarioLogueado) #marca una reserva como pagada
+            guardarUsuarios(USUARIOS)
             input("Presione Enter para continuar...")
             limpiarConsola()
         elif opcion == OPCION_SALIR: #salir del programa
