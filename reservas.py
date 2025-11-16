@@ -147,16 +147,15 @@ def publicarReserva(usuarioLogueado, nombreUsuario):
     reservasPrivadas = [reserva for reserva in reservas if reserva.get("Integrantes") == "privado"]  #lista de reservas privadas
 
     if not reservasPrivadas:
-        print("Ups! No tienes reservas privadas para publicar.")
         return
 
     print("\nTus reservas privadas:")
     for indice, reserva in enumerate(reservasPrivadas, start=1): #mostramos las reservas privadas con un indice
         print(f"{indice}. {reserva['Deporte']} - {reserva['Horario']}") #printeamos el indice, deporte y horario de la reserva privada
 
-    seleccionInput = input("Seleccione el número de la reserva que desea publicar o '0' para cancelar: ")
+    seleccionInput = input("Seleccione el número de la reserva que desea publicar o 'cancelar': ")
 
-    if seleccionInput == "0":
+    if seleccionInput == "cancelar":
         print("Operación cancelada.")
         return
     try:
@@ -237,9 +236,9 @@ def unirseReserva(nombreUsuario, usuarios):
         print("No hay reservas publicas!")
     else:
         while True: #Tecnica para emular un do-while (no le va a gustar a la profe)
-            seleccionInput = input("Seleccione la reserva a la que se quiere unir o '0' para cancelar: ")
+            seleccionInput = input("Seleccione la reserva a la que se quiere unir o 'CANCELAR': ")
 
-            if seleccionInput == "0":
+            if seleccionInput.lower() == "cancelar":
                 print("Operación cancelada.")
                 return
 
