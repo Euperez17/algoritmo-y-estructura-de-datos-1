@@ -60,7 +60,7 @@ def mostrarReservasOcupadas(dictUsuarios, deporteBuscar):
     """
     Muestra los horarios ocupados para un deporte especifico.
     """
-    print(f"\nHorarios ocupados para {deporteBuscar}:")
+    print(f"\nHorarios ocupados (por otros usuarios) para {deporteBuscar}:")
     reservados = buscarHorariosReservados(dictUsuarios) #obtenemos todas las reservas hechas por todos los usuarios
 
     # Filtramos horarios ocupados
@@ -127,16 +127,19 @@ def mostrarMisReservas(usuarioLogueado):
         print("No tienes reservas actualmente.")
         return
 
+    print("Tus reservas:\n")
+    print("Deporte | Horario | Integrantes | Estado de Pago")
     for reserva in reservas:
         integrantes = reserva.get("Integrantes", "privado")
         estadoPago = "Pagado" if reserva.get("Pagado", False) else "No Pagado"
 
-        print(f"{reserva['Deporte']} - Horario: {reserva['Horario']} - ", end="")
+        print(f"{reserva['Deporte']} | {reserva['Horario']} | ", end="")
         if integrantes != "privado":
             # Usamos join() para mostrar integrantes de forma mas clara
-            print(f"Integrantes: {', '.join(integrantes)} - {estadoPago}")
+            print(f"Integrantes: {', '.join(integrantes)} | {estadoPago}")
         else:
-            print(f"Privada - {estadoPago}")
+            print(f"Privada | {estadoPago}")
+    print()
 
 def publicarReserva(usuarioLogueado, nombreUsuario):
     """
@@ -186,7 +189,7 @@ def confirmarPagoReserva(usuarioLogueado):
         print("No tienes reservas pendientes de pago.")
         return
 
-    print("\nTus reservas pendientes de pago:")
+    print("Tus reservas pendientes de pago:")
     indice = 1
     for reserva in reservasNoPagadas:
         integrantes = reserva.get("Integrantes", "privado")

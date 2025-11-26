@@ -53,5 +53,22 @@
                 "CupoMaximo": 22
             }
         ]
+    },
+    "dante2": {
+        "contrasena": "danosqui",
+        "reservas": [
+            {
+                "Deporte": "Futbol",
+                "Horario": "23:00",
+                "Integrantes": "privado",
+                "Pagado": true
+            },
+            {
+                "Deporte": "Padel",
+                "Horario": "21:30",
+                "Integrantes": "privado",
+                "Pagado": true
+            }
+        ]
     }
 }
