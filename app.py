@@ -85,7 +85,7 @@ def main():
     print(f"Bienvenido, {nombreUsuario}!") #damos la bienvenida al usuario
 
     opcion = 0
-    OPCION_SALIR=6 #por si añadimos mas opciones
+    OPCION_SALIR=7 #por si añadimos mas opciones
     while opcion != OPCION_SALIR:
         print("\n--- MENÚ PRINCIPAL ---")
         print("1. Reservar un horario")
@@ -93,6 +93,7 @@ def main():
         print("3. Publicar una reserva")
         print("4. Unirse a una reserva publicada")
         print("5. Confirmar pago de reserva")
+        print("6. Ver mis reservas")
         print(f"{OPCION_SALIR}. Salir")
         
 
@@ -137,6 +138,11 @@ def main():
             mostrarMisReservas(usuarioLogueado) #muestra las reservas del usuario logueado
             confirmarPagoReserva(usuarioLogueado) #marca una reserva como pagada
             guardarUsuarios(USUARIOS)
+            input("Presione Enter para continuar...")
+            limpiarConsola()
+        elif opcion == 6: #ver mis reservas
+            limpiarConsola()
+            mostrarMisReservas(usuarioLogueado) #muestra las reservas del usuario logueado
             input("Presione Enter para continuar...")
             limpiarConsola()
         elif opcion == OPCION_SALIR: #salir del programa
