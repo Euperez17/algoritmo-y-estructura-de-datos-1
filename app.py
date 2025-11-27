@@ -123,7 +123,7 @@ def main():
             limpiarConsola()
         elif opcion == 3: #publicar una reserva
             limpiarConsola()
-            mostrarMisReservas(usuarioLogueado) #muestra las reservas del usuario logueado
+            mostrarMisReservas(usuarioLogueado,USUARIOS,nombreUsuario) #muestra las reservas del usuario logueado
             publicarReserva(usuarioLogueado,nombreUsuario) #publica una reserva privada del usuario logueado
             guardarUsuarios(USUARIOS)
             input("Presione Enter para continuar...")
@@ -136,14 +136,14 @@ def main():
             limpiarConsola()
         elif opcion == 5: #confirmar pago de una reserva
             limpiarConsola()
-            mostrarMisReservas(usuarioLogueado) #muestra las reservas del usuario logueado
+            mostrarMisReservas(usuarioLogueado,USUARIOS,nombreUsuario) #muestra las reservas del usuario logueado
             confirmarPagoReserva(usuarioLogueado) #marca una reserva como pagada
             guardarUsuarios(USUARIOS)
             input("Presione Enter para continuar...")
             limpiarConsola()
         elif opcion == 6: #ver mis reservas
             limpiarConsola()
-            mostrarMisReservas(usuarioLogueado) #muestra las reservas del usuario logueado
+            mostrarMisReservas(usuarioLogueado,USUARIOS,nombreUsuario) #muestra las reservas del usuario logueado
             input("Presione Enter para continuar...")
             limpiarConsola()
         elif opcion == OPCION_SALIR: #salir del programa

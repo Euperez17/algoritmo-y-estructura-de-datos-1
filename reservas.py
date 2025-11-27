@@ -119,11 +119,15 @@ def reservar(dictHorarios, dictUsuarios):
 
     return {"Deporte":deporteIngresado,"Horario":seleccion,"Integrantes":"privado","Pagado":False} #al menos por ahora, es privada por defecto y no pagada
 
-def mostrarMisReservas(usuarioLogueado):
+def mostrarMisReservas(usuarioLogueado,usuarios,nombreUsuario):
     """
     Muestra las reservas del usuario logueado.
     """
-    reservas = usuarioLogueado.get("reservas", [])
+    reservas = usuarioLogueado.get("reservas", []).copy()
+    for nombre,datos in usuarios.items():
+        for reserva in datos["reservas"]:
+            if nombreUsuario in reserva["Integrantes"] and nombre != nombreUsuario:
+                reservas.append(reserva)
 
     if not reservas:
         print("No tienes reservas actualmente.")
@@ -284,7 +288,7 @@ def unirseReserva(nombreUsuario, usuarios):
             reservaSeleccionada["Integrantes"].append(nombreUsuario)
 
             # Agregar la reserva a la lista personal del usuario que se une
-            usuarios[nombreUsuario]["reservas"].append(reservaSeleccionada)
+            #usuarios[nombreUsuario]["reservas"].append(reservaSeleccionada)
 
             # Actualizar la lista de integrantes en las reservas de TODOS los usuarios que ya estaban
             for integranteExistente in integrantesAnteriores:
