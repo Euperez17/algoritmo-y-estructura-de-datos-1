@@ -6,8 +6,7 @@
                 "Deporte": "Futbol",
                 "Horario": "20:00",
                 "Integrantes": [
-                    "dante",
-                    "nuevo"
+                    "dante"
                 ],
                 "CupoMaximo": 22
             },
@@ -15,8 +14,7 @@
                 "Deporte": "Padel",
                 "Horario": "08:00",
                 "Integrantes": [
-                    "dante",
-                    "nuevo"
+                    "dante"
                 ],
                 "CupoMaximo": 4
             },
@@ -25,8 +23,7 @@
                 "Horario": "22:00",
                 "Integrantes": [
                     "dante",
-                    "augus",
-                    "nuevo"
+                    "augus"
                 ],
                 "CupoMaximo": 4
             },
@@ -73,9 +70,5 @@
                 "Pagado": true
             }
         ]
-    },
-    "nuevo": {
-        "contrasena": "nuevo",
-        "reservas": []
     }
 }
