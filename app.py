@@ -23,8 +23,6 @@ def main():
             print("Respuesta no válida. Por favor ingrese 'S' o 'N'.")
             tieneCuenta = input("Ya tenés una cuenta? (S/N): ")
     
-    
-    
         # --- REGISTRO ---
         if tieneCuenta.lower() == "n":
             limpiarConsola()
@@ -66,17 +64,20 @@ def main():
             print("Usuario o contraseña incorrectos. Intente nuevamente, o escriba 'cancelar' para volver al menú anterior.")
             nombreUsuario = input("Ingrese su nombre de usuario: ").strip()
             if nombreUsuario.lower() == "cancelar":
-                nombreUsuarioReal = None
-                break 
+                break
             contraseña = getpass.getpass("Ingrese su contraseña: ")
             if contraseña.lower() == "cancelar":
-                nombreUsuarioReal = None
                 break
             # Buscar el usuario nuevamente
             nombreUsuarioReal = ""
             for usuario in USUARIOS:
                 if usuario.lower() == nombreUsuario.lower():
                     nombreUsuarioReal = usuario
+
+        # Si el usuario canceló, volver al menú principal
+        if nombreUsuarioReal == "":
+            nombreUsuarioReal = None
+            continue
 
     usuarioLogueado = USUARIOS[nombreUsuarioReal] #obtenemos el diccionario del usuario logueado
     nombreUsuario = nombreUsuarioReal #usamos el nombre real del usuario para las operaciones

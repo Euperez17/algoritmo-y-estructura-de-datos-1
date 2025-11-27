@@ -63,11 +63,13 @@ def mostrarReservasOcupadas(dictUsuarios, deporteBuscar):
     print(f"\nHorarios ocupados (por otros usuarios) para {deporteBuscar}:")
     reservados = buscarHorariosReservados(dictUsuarios) #obtenemos todas las reservas hechas por todos los usuarios
 
-    # Filtramos horarios ocupados
-    ocupados = [reserva["Horario"] for reserva in reservados if reserva["Deporte"].lower() == deporteBuscar.lower()]
+    # Filtramos horarios ocupados y eliminamos duplicados usando un set
+    ocupados = {reserva["Horario"] for reserva in reservados if reserva["Deporte"].lower() == deporteBuscar.lower()}
 
     if ocupados:
-        print(" | ".join(ocupados))
+        # Convertir el set a lista ordenada para mostrar en orden
+        ocupados_ordenados = sorted(ocupados)
+        print(" | ".join(ocupados_ordenados))
     else:
         print("No hay horarios reservados todavía.")
 
@@ -275,5 +277,26 @@ def unirseReserva(nombreUsuario, usuarios):
         if integrantesActuales >= cupoMaximo:
             print(f"Lo siento, la reserva ya alcanzó su capacidad máxima de {cupoMaximo} integrantes.")
         else:
+            # Guardar los integrantes actuales antes de agregar el nuevo
+            integrantesAnteriores = reservaSeleccionada["Integrantes"].copy()
+
+            # Agregar el nuevo integrante a la reserva
             reservaSeleccionada["Integrantes"].append(nombreUsuario)
+
+            # Agregar la reserva a la lista personal del usuario que se une
+            usuarios[nombreUsuario]["reservas"].append(reservaSeleccionada)
+
+            # Actualizar la lista de integrantes en las reservas de TODOS los usuarios que ya estaban
+            for integranteExistente in integrantesAnteriores:
+                if integranteExistente in usuarios:
+                    # Buscar esta reserva en la lista del integrante existente
+                    for reservaIntegrante in usuarios[integranteExistente]["reservas"]:
+                        # Identificar la reserva por deporte y horario
+                        if (reservaIntegrante.get("Deporte") == reservaSeleccionada["Deporte"] and
+                            reservaIntegrante.get("Horario") == reservaSeleccionada["Horario"] and
+                            reservaIntegrante.get("Integrantes") != "privado"):
+                            # Actualizar la lista de integrantes
+                            reservaIntegrante["Integrantes"] = reservaSeleccionada["Integrantes"].copy()
+
             print(f"Reserva actualizada correctamente! Ahora son {integrantesActuales + 1}/{cupoMaximo} integrantes.")
+            print(f"La reserva se ha agregado a tus reservas y actualizado para todos los participantes.")
